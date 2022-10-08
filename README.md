@@ -2,14 +2,6 @@
 开发环境：QT5.15.0
 数据库：mysql 8.0
 
-请求端口：8522
-
-
-聊天端口：8524
-
-
-Redis端口：8523
-
 
 原作者链接：https://www.52pojie.cn/forum.php?mod=viewthread&tid=1498266&ctid=1776
 
