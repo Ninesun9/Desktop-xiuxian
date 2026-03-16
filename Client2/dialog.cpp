@@ -7,6 +7,9 @@
 #include "QFileDialog"
 #include <QSettings>
 #include <QDir>
+#include <QMessageBox>
+
+#include "secure_transport.h"
 
 Dialog::Dialog(QWidget *parent)
     : QWidget(parent)
@@ -200,8 +203,6 @@ void Dialog::every10Second()
 
 void Dialog::every60Second()
 {
-
-
     QJsonObject _exampleObject;
     _exampleObject.insert("userid", _userid);
     _exampleObject.insert("username", _userName);
@@ -214,26 +215,16 @@ void Dialog::every60Second()
     //post请求的数据是Json格式。首先创建QJsonObject对象，并插入数据。
     m_httpDocum.setObject(_exampleObject);
     m_httpData = m_httpDocum.toJson(QJsonDocument::Compact);
-    QAESEncryption encryption(QAESEncryption::AES_128, QAESEncryption::ECB, QAESEncryption::ZERO);
 
-        QString key="c0e2fdbe"+QDateTime::currentDateTime().toString("yyyyMMdd");
-        //qDebug()<<key;
-        //QByteArray hashKey = QCryptographicHash::hash(key.toUtf8(), QCryptographicHash::Md5);
+    QString errorMessage;
+    if (!SecureTransport::validateConfig(&errorMessage)) {
+        qWarning() << errorMessage;
+        return;
+    }
 
-        QByteArray encodedText = encryption.encode(QString(m_httpData).toUtf8(), key.toLatin1());
-        //qDebug()<<"key:"<<QString(m_httpData).toUtf8().toHex();
-        QString str_encode_text=QString::fromLatin1(encodedText.toBase64());
-        //qDebug()<<"encodedText0:"<<m_httpData;
-        //qDebug()<<"encodedText2:"<<str_encode_text;
-
-    // 转成Json格式
-    QUrl _url("http://yinciyunji.com:8522/updata-new");
-    m_httpRequest.setUrl(_url);
-    // 设置请求的url 注意地址的正确性 之前我就受到了http和https的坑
-        m_httpRequest.setHeader(QNetworkRequest::ContentTypeHeader,QVariant("text/html; charset=utf-8"));
-
-        // 设置请求头
-    m_httpReply = m_httpManager->post(m_httpRequest, str_encode_text.toUtf8());
+    SecureTransport::configureRequest(m_httpRequest, "/updata-new");
+    const QByteArray encryptedPayload = SecureTransport::encryptPayload(m_httpData);
+    m_httpReply = m_httpManager->post(m_httpRequest, encryptedPayload);
     // post请求
     QEventLoop _loop;
     QTimer _timer;

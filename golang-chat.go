@@ -28,7 +28,7 @@ import (
 )
 func init() {
         file := "./" +"message"+ ".txt"
-        logFile, err := os.OpenFile(file, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0766)
+	logFile, err := os.OpenFile(file, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0644)
         if err != nil {
                 panic(err)
         }
@@ -156,8 +156,11 @@ func main() {
 		// Remove dead clients
 		//
 		case conn := <-deadConnections:
-			log.Printf("Client %d disconnected", allClients[conn])
-			delete(allClients, conn)
+			if clientID, ok := allClients[conn]; ok {
+				log.Printf("Client %d disconnected", clientID)
+				delete(allClients, conn)
+			}
+			_ = conn.Close()
 		}
 	}
 }

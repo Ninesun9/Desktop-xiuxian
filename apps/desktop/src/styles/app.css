@@ -1,0 +1,170 @@
+:root {
+  color-scheme: light;
+  font-family: "Segoe UI", "PingFang SC", sans-serif;
+  background:
+    radial-gradient(circle at top, rgba(255, 204, 153, 0.8), transparent 40%),
+    linear-gradient(160deg, #fff7ed 0%, #fde68a 100%);
+  color: #1f2937;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-width: 100vw;
+  min-height: 100vh;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+.shell {
+  min-height: 100vh;
+  padding: 24px;
+  display: grid;
+  gap: 16px;
+  align-content: start;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+}
+
+.pet-card,
+.provider-card,
+.chat-card {
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  border-radius: 24px;
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.66);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 16px 40px rgba(120, 53, 15, 0.12);
+}
+
+.eyebrow {
+  margin: 0 0 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-size: 12px;
+  color: #9a3412;
+}
+
+h1,
+h2,
+.status,
+p {
+  margin-top: 0;
+}
+
+.metrics {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.metrics div {
+  padding: 12px;
+  border-radius: 16px;
+  background: rgba(255, 247, 237, 0.9);
+}
+
+.metrics span {
+  display: block;
+  font-size: 12px;
+  color: #78716c;
+}
+
+.metrics strong {
+  font-size: 20px;
+}
+
+.chat-card {
+  display: grid;
+  gap: 16px;
+}
+
+.chat-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: start;
+}
+
+.chat-badge {
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: rgba(249, 115, 22, 0.12);
+  color: #c2410c;
+  font-size: 12px;
+}
+
+.message-list {
+  min-height: 260px;
+  max-height: 360px;
+  overflow: auto;
+  display: grid;
+  gap: 12px;
+}
+
+.empty-state {
+  margin: 0;
+  color: #78716c;
+}
+
+.message {
+  padding: 12px 14px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.72);
+}
+
+.message-user {
+  background: rgba(254, 215, 170, 0.7);
+}
+
+.message-assistant {
+  background: rgba(255, 251, 235, 0.9);
+}
+
+.message-role {
+  display: inline-block;
+  margin-bottom: 6px;
+  font-size: 12px;
+  color: #9a3412;
+}
+
+.message p {
+  margin: 0;
+  white-space: pre-wrap;
+}
+
+.composer {
+  display: grid;
+  gap: 10px;
+}
+
+.composer textarea {
+  width: 100%;
+  resize: vertical;
+  min-height: 88px;
+  border: 1px solid rgba(251, 146, 60, 0.35);
+  border-radius: 16px;
+  padding: 12px 14px;
+  font: inherit;
+  background: rgba(255, 255, 255, 0.85);
+}
+
+.composer button {
+  justify-self: end;
+  border: 0;
+  border-radius: 999px;
+  padding: 10px 18px;
+  font: inherit;
+  color: #fff;
+  background: linear-gradient(135deg, #ea580c 0%, #f59e0b 100%);
+  cursor: pointer;
+}
+
+.composer button:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}

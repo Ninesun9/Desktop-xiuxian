@@ -1,0 +1,31 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "Desktop Companion",
+  "version": "0.1.0",
+  "identifier": "com.nines.desktopcompanion",
+  "build": {
+    "beforeDevCommand": "npm run dev -w @desktop-companion/desktop",
+    "beforeBuildCommand": "npm run build -w @desktop-companion/desktop",
+    "frontendDist": "../dist",
+    "devUrl": "http://localhost:1420"
+  },
+  "app": {
+    "windows": [
+      {
+        "title": "Desktop Companion",
+        "label": "main",
+        "width": 420,
+        "height": 640,
+        "resizable": true,
+        "transparent": true,
+        "decorations": false,
+        "alwaysOnTop": true
+      }
+    ]
+  },
+  "bundle": {
+    "active": true,
+    "targets": "all",
+    "icon": []
+  }
+}

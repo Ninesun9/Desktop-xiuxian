@@ -1,6 +1,8 @@
 #include "feedback.h"
 #include "ui_feedback.h"
 #include <QMessageBox>
+
+#include "../secure_transport.h"
 FeedBack::FeedBack(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::FeedBack)
@@ -16,14 +18,13 @@ FeedBack::~FeedBack()
 
 void FeedBack::on_send_clicked()
 {
+    QString errorMessage;
+    if (!SecureTransport::validateConfig(&errorMessage)) {
+        QMessageBox::warning(this, "配置错误", errorMessage);
+        return;
+    }
 
-    // 转成Json格式
-    QUrl _url("http://xiuxian.fuh.ink:8522/feedback");
-    m_httpRequest.setUrl(_url);
-    // 设置请求的url 注意地址的正确性 之前我就受到了http和https的坑
-        m_httpRequest.setHeader(QNetworkRequest::ContentTypeHeader,QVariant("text/html; charset=utf-8"));
-
-        // 设置请求头
+    SecureTransport::configureRequest(m_httpRequest, "/feedback");
     m_httpReply = m_httpManager->post(m_httpRequest, ui->textEdit->toPlainText().toUtf8());
     // post请求
     QEventLoop _loop;
