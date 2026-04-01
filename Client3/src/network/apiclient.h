@@ -13,7 +13,7 @@ class ApiClient : public QObject
 public:
     explicit ApiClient(QObject *parent = nullptr);
 
-    void setBaseUrl(const QString &url);   // e.g. "http://127.0.0.1:3000"
+    void setBaseUrl(const QString &url);   // e.g. "http://107.174.220.99:3000"
     void setAccessToken(const QString &token);
 
     // POST /api/v1/auth/device-login
@@ -46,6 +46,6 @@ private:
                                 std::function<void(const QByteArray &)> onSuccess);
 
     QNetworkAccessManager m_nam;
-    QString               m_baseUrl  = "http://127.0.0.1:3000";
+    QString               m_baseUrl  = "http://107.174.220.99:3000";
     QString               m_token;
 };

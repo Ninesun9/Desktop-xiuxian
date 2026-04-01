@@ -35,7 +35,7 @@ PetWindow::PetWindow(QWidget *parent)
     setupMenu();
     setupTimers();
 
-    m_api.setBaseUrl("http://127.0.0.1:3000");
+    m_api.setBaseUrl("http://107.174.220.99:3000");
     connect(&m_api, &ApiClient::loginSucceeded, this, &PetWindow::onLoginSucceeded);
     connect(&m_api, &ApiClient::loginFailed,    this, &PetWindow::onLoginFailed);
     connect(&m_api, &ApiClient::petStateFetched,this, &PetWindow::onPetStateFetched);
@@ -244,6 +244,8 @@ void PetWindow::onTick10s()
         QJsonObject patch;
         patch["statusText"] = m_profile.jieDuanName()
             + " · 修为 " + QString::number(m_profile.xiuwei, 'e', 3);
+        patch["jingjie"] = m_profile.jingjie;
+        patch["xiuwei"]  = m_profile.xiuwei;
         m_api.patchPetState(patch);
     }
 }
@@ -365,7 +367,7 @@ void PetWindow::showFeedback()
 {
     if (!m_feedback) {
         m_feedback = new FeedBack(this);
-        m_feedback->setBaseUrl("http://127.0.0.1:3000");
+        m_feedback->setBaseUrl("http://107.174.220.99:3000");
     }
     m_feedback->show();
     m_feedback->raise();

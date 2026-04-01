@@ -4,12 +4,14 @@
 #include <QCloseEvent>
 #include <QDesktopServices>
 #include <QHBoxLayout>
+#include <QJsonDocument>
+#include <QJsonObject>
 #include <QNetworkRequest>
 #include <QPushButton>
 #include <QUrl>
 #include <QVBoxLayout>
 
-static constexpr char kVersionUrl[] = "http://xiuxian.fuh.ink:8522/lastVersion";
+static constexpr char kVersionUrl[] = "http://107.174.220.99:3000/api/v1/version";
 
 UpdateChecker::UpdateChecker(QWidget *parent)
     : QDialog(parent)
@@ -59,14 +61,14 @@ void UpdateChecker::onReply(QNetworkReply *reply)
     if (reply->error() != QNetworkReply::NoError)
         return;
 
-    // 格式：版本号|下载链接|HTML内容
-    const QStringList parts = QString::fromUtf8(reply->readAll()).split('|');
-    if (parts.size() < 3) return;
+    // 格式：{ "version":"1.0.0", "downloadLink":"...", "notes":"<html>" }
+    const QJsonObject obj = QJsonDocument::fromJson(reply->readAll()).object();
+    if (obj.isEmpty()) return;
 
-    m_browser->setHtml(parts.at(2));
-    m_downloadLink = parts.at(1);
+    m_browser->setHtml(obj["notes"].toString());
+    m_downloadLink = obj["downloadLink"].toString();
 
-    if (qApp->applicationVersion() != parts.at(0))
+    if (qApp->applicationVersion() != obj["version"].toString())
         show(); // 有新版本才弹出
 }
 

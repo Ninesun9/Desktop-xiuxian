@@ -2,6 +2,8 @@
 
 #include <QEventLoop>
 #include <QHBoxLayout>
+#include <QJsonDocument>
+#include <QJsonObject>
 #include <QMessageBox>
 #include <QNetworkReply>
 #include <QNetworkRequest>
@@ -43,12 +45,14 @@ void FeedBack::onSend()
     const QString text = m_edit->toPlainText().trimmed();
     if (text.isEmpty()) return;
 
-    QNetworkRequest req(QUrl(m_baseUrl + "/feedback"));
-    req.setHeader(QNetworkRequest::ContentTypeHeader, "text/plain; charset=utf-8");
+    QNetworkRequest req(QUrl(m_baseUrl + "/api/v1/feedback"));
+    req.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
     if (!m_token.isEmpty())
         req.setRawHeader("Authorization", ("Bearer " + m_token).toUtf8());
 
-    auto *reply = m_nam.post(req, text.toUtf8());
+    QJsonObject body;
+    body["content"] = text;
+    auto *reply = m_nam.post(req, QJsonDocument(body).toJson(QJsonDocument::Compact));
 
     // 等待响应，最多 3 秒
     QEventLoop loop;

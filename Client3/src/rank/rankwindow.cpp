@@ -87,7 +87,7 @@ void RankWindow::fetchLegacy(const QString &url)
 
 void RankWindow::fetchNewApi(const QString &path)
 {
-    QNetworkRequest req(QUrl("http://127.0.0.1:3000" + path));
+    QNetworkRequest req(QUrl("http://107.174.220.99:3000" + path));
     req.setRawHeader("Authorization", ("Bearer " + m_token).toUtf8());
     m_nam.get(req);
 }
