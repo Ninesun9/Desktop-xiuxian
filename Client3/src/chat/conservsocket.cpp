@@ -2,8 +2,7 @@
 
 #include <QHostInfo>
 
-// 聊天服务器（与 Client2 一致）
-static constexpr char kHost[] = "yinciyunji.com";
+static constexpr char kHost[] = "107.174.220.99";
 static constexpr quint16 kPort = 8524;
 
 ConServSocket::ConServSocket(QObject *parent)

@@ -1,0 +1,15 @@
+[Unit]
+Description=Xiuxian TCP Chat Server
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/python3 /opt/xiuxian-chat/chat_server.py
+Restart=always
+RestartSec=5
+User=root
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target
