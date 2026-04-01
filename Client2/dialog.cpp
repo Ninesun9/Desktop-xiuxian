@@ -9,6 +9,8 @@
 #include <QDir>
 #include <QMessageBox>
 
+#include "core/playerprofilestore.h"
+#include "network/playerstatsreporter.h"
 #include "secure_transport.h"
 
 Dialog::Dialog(QWidget *parent)
@@ -32,7 +34,7 @@ Dialog::Dialog(QWidget *parent)
     _setTop.setText("置顶");
     _setTop.setCheckable(true);
     _setTop.setChecked(true);
-    _chat.setText("华山论剑");
+    _chat.setText(QStringLiteral("Mail"));
     //pop_menu.addAction(&_action52pojie);
     //pop_menu.addAction(&_actionN5012346);
     pop_menu.addAction(&_setTop);
@@ -140,7 +142,7 @@ Dialog::Dialog(QWidget *parent)
                 _jianghu.show();
             });
 
-    connect(&_chat,&QAction::triggered,&_chatWindow,&ChatWindow::show);
+    connect(&_chat,&QAction::triggered,this,&Dialog::toggleMailDrawer);
     jieDuanNameList.append("炼体期");
     jieDuanNameList.append("练气期");
     jieDuanNameList.append("筑基期");
@@ -163,8 +165,7 @@ Dialog::Dialog(QWidget *parent)
 
     _jianghu.setInfo(_userName,_userid);
     _chatWindow.setInfo(_userName,_userid);
-
-    m_httpManager = new QNetworkAccessManager;
+    _mailDrawer.setPlayerInfo(_userName, _userid);
 
     connect(&timer1s,&QTimer::timeout,this,&Dialog::everySecond);
     connect(&timer10s,&QTimer::timeout,this,&Dialog::every10Second);
@@ -182,17 +183,10 @@ Dialog::~Dialog()
 {
     delete ui;
 }
-#include <thread>
-void sendData()
-{
-    //httplib::Client cli("http://yinciyunji.com:8522");
-    //auto res = cli.Post("/updata", "text", "text/plain");
-}
 void Dialog::everySecond()
 {
     addXiuwei();
     refDispaly();
-    sendData();
 }
 void Dialog::every10Second()
 {
@@ -203,123 +197,44 @@ void Dialog::every10Second()
 
 void Dialog::every60Second()
 {
-    QJsonObject _exampleObject;
-    _exampleObject.insert("userid", _userid);
-    _exampleObject.insert("username", _userName);
-    _exampleObject.insert("shengming", _shengming.toDouble());
-    _exampleObject.insert("gongji", _gongji);
-    _exampleObject.insert("fangyu", _fangyu);
-    _exampleObject.insert("wuxing", _wuxing);
-    _exampleObject.insert("jingjie", _jingjie);
-    _exampleObject.insert("xiuwei", _xiuwei);
-    //post请求的数据是Json格式。首先创建QJsonObject对象，并插入数据。
-    m_httpDocum.setObject(_exampleObject);
-    m_httpData = m_httpDocum.toJson(QJsonDocument::Compact);
+    PlayerStatsSnapshot snapshot;
+    snapshot.userId = _userid;
+    snapshot.userName = _userName;
+    snapshot.shengming = _shengming.toDouble();
+    snapshot.gongji = _gongji.toDouble();
+    snapshot.fangyu = _fangyu.toDouble();
+    snapshot.wuxing = _wuxing;
+    snapshot.jingjie = _jingjie;
+    snapshot.xiuwei = _xiuwei;
 
     QString errorMessage;
-    if (!SecureTransport::validateConfig(&errorMessage)) {
+    if (!PlayerStatsReporter::sendUpdate(snapshot, &errorMessage))
+    {
         qWarning() << errorMessage;
-        return;
     }
-
-    SecureTransport::configureRequest(m_httpRequest, "/updata-new");
-    const QByteArray encryptedPayload = SecureTransport::encryptPayload(m_httpData);
-    m_httpReply = m_httpManager->post(m_httpRequest, encryptedPayload);
-    // post请求
-    QEventLoop _loop;
-    QTimer _timer;
-    connect(m_httpReply, SIGNAL(finished()), &_loop, SLOT(quit()));
-    connect(&_timer, SIGNAL(timeout()), &_loop, SLOT(quit()));
-    // eventloop用于阻塞等待消息，并结合timer进行超时处理
-    _timer.start(1000);
-    _loop.exec();
-    // 这里的eventloop只是阻塞此段，并不会阻塞其他块的代码，比如我不加定时器，让这个eventloop一直exec，还是可以出发相关的槽函数
-    if(_timer.isActive())
-    {
-        _timer.stop();
-        // 处理函数
-    }
-    else
-    {
-        qDebug() <<  "time Out";
-        //超时结果
-    }
-    _loop.deleteLater();
-    _timer.deleteLater();
-    // 释放资源
-    m_httpReply->abort();
-    // 断开连接
-    return ;
-
-
 }
 void Dialog::initThis()
 {
-    QSettings configIni(QDir::homePath()+"/AppData/Roaming/xiuxian.ini", QSettings::IniFormat);
-    if(configIni.status() == QSettings::NoError)
+    PlayerProfile profile;
+    if (!PlayerProfileStore::load(&profile))
     {
-        _userid = configIni.value("xiuxian/userid").toString();
-        _userName = configIni.value("xiuxian/username").toString();
-        {
-            QString t1=configIni.value("xiuxian/shengming").toString();
-            QByteArray b1 = QByteArray::fromHex(t1.toLatin1());
-            QByteArray b2 = QByteArray::fromBase64(b1);
-            QString t2 = QString(b2);
-            _shengming =QString::number( QVariant(t2).toReal(),'g',15);
-        }
-        {
-            QString t1=configIni.value("xiuxian/gongji").toString();
-            QByteArray b1 = QByteArray::fromHex(t1.toLatin1());
-            QByteArray b2 = QByteArray::fromBase64(b1);
-            QString t2 = QString(b2);
-            _gongji = QString::number(QVariant(t2).toReal(),'g',15);
-        }
-        {
-            QString t1=configIni.value("xiuxian/fangyu").toString();
-            QByteArray b1 = QByteArray::fromHex(t1.toLatin1());
-            QByteArray b2 = QByteArray::fromBase64(b1);
-            QString t2 = QString(b2);
-            _fangyu = QString::number(QVariant(t2).toReal(),'g',15);
-        }
-        {
-            QString t1=configIni.value("xiuxian/wuxing").toString();
-            QByteArray b1 = QByteArray::fromHex(t1.toLatin1());
-            QByteArray b2 = QByteArray::fromBase64(b1);
-            QString t2 = QString(b2);
-            _wuxing =QString::number(QVariant(t2).toReal(),'g',15);
-        }
-        {
-            QString t1=configIni.value("xiuxian/jingjie").toString();
-            QByteArray b1 = QByteArray::fromHex(t1.toLatin1());
-            QByteArray b2 = QByteArray::fromBase64(b1);
-            QString t2 = QString(b2);
-            _jingjie = QVariant(t2).toInt();
-        }
-        {
-            QString t1=configIni.value("xiuxian/xiuwei").toString();
-            QByteArray b1 = QByteArray::fromHex(t1.toLatin1());
-            QByteArray b2 = QByteArray::fromBase64(b1);
-            QString t2 = QString(b2);
-            _xiuwei = QString::number(QVariant(t2).toReal(),'g',15);
-        }
-
-
-        if(_userid.count() == 32)
-        {
-
-        }
-        else
-        {
-            registerThis();
-        }
-
+        registerThis();
+        return;
     }
-    else
+
+    _userid = profile.userId;
+    _userName = profile.userName;
+    _shengming = profile.shengming;
+    _gongji = profile.gongji;
+    _fangyu = profile.fangyu;
+    _wuxing = profile.wuxing;
+    _jingjie = profile.jingjie;
+    _xiuwei = profile.xiuwei;
+
+    if(!PlayerProfileStore::hasValidUserId(_userid))
     {
         registerThis();
     }
-
-
 }
 void Dialog::registerThis()
 {
@@ -336,17 +251,15 @@ void Dialog::registerThis()
     }
     else
     {
-        _userName = text;
-        _userid= QCryptographicHash::hash(
-                    (QDateTime::currentDateTime().toString()+text+QString::number(qrand())).toLatin1(),
-                    QCryptographicHash::Md5)
-                    .toHex();
-        _shengming =QString::number( (qrand() % 10)+95);
-        _gongji=QString::number((qrand() % 10)+15.0);
-        _fangyu=QString::number((qrand() % 10)+15.0);
-        _wuxing=QString::number(((qrand() % 2000)/2000.0)+0.5);
-        _jingjie = 0;
-        _xiuwei = "0";
+        const PlayerProfile profile = PlayerProfileStore::createNew(text);
+        _userName = profile.userName;
+        _userid = profile.userId;
+        _shengming = profile.shengming;
+        _gongji = profile.gongji;
+        _fangyu = profile.fangyu;
+        _wuxing = profile.wuxing;
+        _jingjie = profile.jingjie;
+        _xiuwei = profile.xiuwei;
         saveData();
     }
 }
@@ -362,19 +275,42 @@ void Dialog::refDispaly()
 }
 void Dialog::saveData()
 {
+    PlayerProfile profile;
+    profile.userId = _userid;
+    profile.userName = _userName;
+    profile.shengming = _shengming;
+    profile.gongji = _gongji;
+    profile.fangyu = _fangyu;
+    profile.wuxing = _wuxing;
+    profile.jingjie = _jingjie;
+    profile.xiuwei = _xiuwei;
+    PlayerProfileStore::save(profile);
+}
 
-    //打开文件
+void Dialog::repositionMailDrawer()
+{
+    if (!_mailDrawer.isVisible())
+    {
+        return;
+    }
 
-    QSettings configIni(QDir::homePath()+"/AppData/Roaming/xiuxian.ini", QSettings::IniFormat);
-    //写入数据，必须指定写入节点和值
-    configIni.setValue("xiuxian/userid",_userid);
-    configIni.setValue("xiuxian/username",_userName);
-    configIni.setValue("xiuxian/shengming",QString(QVariant(_shengming.toDouble()).toString().toLatin1().toBase64().toHex()));
-    configIni.setValue("xiuxian/gongji",QString(QVariant(_gongji.toDouble()).toString().toLatin1().toBase64().toHex()));
-    configIni.setValue("xiuxian/fangyu",QString(QVariant(_fangyu.toDouble()).toString().toLatin1().toBase64().toHex()));
-    configIni.setValue("xiuxian/wuxing",QString(QVariant(_wuxing.toDouble()).toString().toLatin1().toBase64().toHex()));
-    configIni.setValue("xiuxian/jingjie",QString(QVariant(_jingjie).toString().toLatin1().toBase64().toHex()));
-    configIni.setValue("xiuxian/xiuwei",QString(QVariant(_xiuwei.toDouble()).toString().toLatin1().toBase64().toHex()));
+    const QPoint topRight = mapToGlobal(rect().topRight());
+    _mailDrawer.move(topRight.x() + 12, topRight.y() + 16);
+}
+
+void Dialog::toggleMailDrawer()
+{
+    if (_mailDrawer.isVisible())
+    {
+        _mailDrawer.hide();
+        return;
+    }
+
+    _mailDrawer.setPlayerInfo(_userName, _userid);
+    _mailDrawer.show();
+    repositionMailDrawer();
+    _mailDrawer.raise();
+    _mailDrawer.activateWindow();
 }
 void Dialog::levelUp()
 {
@@ -515,6 +451,7 @@ void Dialog::on__changeName_triggered()
     else
     {
         _userName = text;
+        _mailDrawer.setPlayerInfo(_userName, _userid);
     }
 }
 

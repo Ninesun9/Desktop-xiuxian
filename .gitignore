@@ -9,3 +9,24 @@ coverage/
 apps/desktop/src-tauri/target/
 apps/desktop/src-tauri/gen/
 *.log
+
+# Qt build artifacts
+Client3/build/
+Client3/compile_commands.json
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Runtime data
+apps/api/.runtime/
+
+# Compiled binaries & archives
+*.exe
+*.tar.gz
+*.zip
+Xiuxian_boxed.exe
+clawmail-project.tar.gz
+deploy.tar.gz
+deploy_final.tar.gz
+site.tar.gz

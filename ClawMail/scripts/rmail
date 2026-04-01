@@ -1,0 +1,8 @@
+#!/bin/bash
+# RobotMail 用户指令处理脚本
+# 在 OpenClaw 中调用此脚本处理用户请求
+
+BOT="${1:-openclaw}"
+shift
+
+python3 /robotmail/scripts/parse_command.py "$@"

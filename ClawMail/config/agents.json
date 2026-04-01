@@ -1,0 +1,46 @@
+{
+  "version": "1.0",
+  "description": "RobotMail Server - Registered Bots",
+  "spool_size_mb": 128,
+  "agents": [
+    {
+      "bot_id": "openclaw",
+      "name": "OpenClaw",
+      "hmac_secret": "changeme-openclaw-secret",
+      "level": 2,
+      "capabilities": ["command", "data", "ack", "tool_transfer"],
+      "allow_file_transfer": true,
+      "receive_dir": "/root/.openclaw/received_tools",
+      "description": "Main coordinator bot"
+    },
+    {
+      "bot_id": "kitebyte",
+      "name": "KiteByte",
+      "hmac_secret": "changeme-kitebyte-secret",
+      "level": 2,
+      "capabilities": ["command", "data", "ack", "tool_transfer"],
+      "allow_file_transfer": true,
+      "receive_dir": "/root/shared/received_tools",
+      "description": "Secondary assistant bot"
+    }
+  ],
+  "priority_names": {
+    "0": "CRITICAL",
+    "1": "HIGH",
+    "2": "NORMAL",
+    "3": "LOW"
+  },
+  "message_types": {
+    "COMMAND": "控制命令",
+    "MESSAGE": "普通消息",
+    "DATA": "数据交换",
+    "ACK": "确认回执",
+    "TOOL_DELIVERY": "工具传递",
+    "HEARTBEAT": "心跳"
+  },
+  "housekeeping": {
+    "attachment_retention_days": 7,
+    "disk_threshold_mb": 1024,
+    "heartbeat_timeout_sec": 300
+  }
+}

@@ -79,14 +79,22 @@
 
 目标：先让 Tauri 能承担 Qt 的“桌宠壳”职责。
 
-Checklist:
+状态：进行中
 
-- [ ] 在 src-tauri 增加窗口显示、隐藏、置顶、拖拽相关 commands
-- [ ] 把当前 Qt 主窗的透明、无边框、always on top 行为对齐到 tauri.conf.json
-- [ ] 增加系统托盘
-- [ ] 增加自启动能力，替代注册表直写
-- [ ] 增加关闭到托盘而不是退出的行为
-- [ ] 为主窗体建立 pet-shell React 组件
+已完成：
+
+- 已建立 Tauri 主窗口骨架，透明、无边框、always on top 已对齐到 [apps/desktop/src-tauri/tauri.conf.json](apps/desktop/src-tauri/tauri.conf.json)
+- 已建立 React 主壳、宠物状态卡和桌面控制卡，位置在 [apps/desktop/src/App.tsx](apps/desktop/src/App.tsx)
+
+进行中：
+
+- 已补前端托盘创建、关闭到托盘、自启动控制逻辑，位置在 [apps/desktop/src/app/lib/tauriDesktop.ts](apps/desktop/src/app/lib/tauriDesktop.ts)
+- 已补 Rust 侧 autostart 插件和 capability 配置，位置在 [apps/desktop/src-tauri/src/main.rs](apps/desktop/src-tauri/src/main.rs) 与 [apps/desktop/src-tauri/capabilities/default.json](apps/desktop/src-tauri/capabilities/default.json)
+
+未开始：
+
+- 拖拽、贴边、缩放等更完整的桌宠窗口行为还没迁
+- 托盘与自启动尚未经过本机 Rust/Tauri 运行验证
 
 完成标志：不依赖 Qt 也能启动一个可交互、可常驻、可置顶的桌宠空壳。
 
@@ -94,14 +102,21 @@ Checklist:
 
 目标：把 Qt 的本地 ini 状态迁成新架构可维护的数据模型。
 
-Checklist:
+状态：进行中
 
-- [ ] 定义用户、设备、宠物状态、皮肤配置的 shared types
-- [ ] 设计本地缓存和服务端状态的边界
-- [ ] 将 xiuxian.ini 和 xiuxian_chat.ini 中保存的字段映射到新 store
-- [ ] 删除对 AppData/Roaming 固定路径的依赖
-- [ ] 决定哪些字段只本地保存，哪些字段上云
-- [ ] 设计首次启动流程，不再在客户端本地直接生成完整业务身份
+已完成：
+
+- 用户、设备、宠物状态、会话消息等基础 shared types 已定义在 [packages/shared/src/contracts/api.ts](packages/shared/src/contracts/api.ts)
+
+进行中：
+
+- 新的 API 状态边界已经立住，但还是内存假数据，位置在 [apps/api/src/index.ts](apps/api/src/index.ts)
+
+未开始：
+
+- xiuxian.ini 和 xiuxian_chat.ini 还没映射到新 store
+- 还没有替代 QSettings 的正式存储方案
+- 首次启动和身份初始化仍未迁移
 
 完成标志：Qt 的 QSettings 不再是主数据来源。
 
@@ -109,14 +124,23 @@ Checklist:
 
 目标：用新的 API + WebSocket 替代旧聊天协议。
 
-Checklist:
+状态：进行中
 
-- [ ] 将 ChatWindow 交互迁到 React chat-panel
-- [ ] 用 Fastify WebSocket 事件替代 ConServSocket 私有协议
-- [ ] 把头像、昵称、消息历史建模成标准 DTO
-- [ ] 服务端接管敏感词和消息校验
-- [ ] 重新实现表情选择器与消息渲染
-- [ ] 决定聊天是单窗口、侧边栏还是悬浮层
+已完成：
+
+- React 聊天面板已建立，并已接入 API + WebSocket 链路，位置在 [apps/desktop/src/app/features/chat/ChatPanel.tsx](apps/desktop/src/app/features/chat/ChatPanel.tsx)
+- Fastify + WebSocket 的新聊天链路已存在，位置在 [apps/api/src/index.ts](apps/api/src/index.ts)
+
+进行中：
+
+- 已开始向 Qt ChatWindow 靠拢，补了快捷提示、时间戳、键盘发送、系统消息和失败提示
+- OpenClaw adapter 已接入消息流，但默认仍可走 mock，位置在 [apps/api/src/modules/openclaw/index.ts](apps/api/src/modules/openclaw/index.ts)
+
+未开始：
+
+- 头像、表情选择器、聊天偏好等 Qt 聊天细节还没迁
+- 敏感词过滤还没完全迁到服务端
+- 旧的 ConServSocket 协议还没有正式下线
 
 完成标志：聊天不再依赖 Qt socket 线程和 base64 文本协议。
 
@@ -124,14 +148,19 @@ Checklist:
 
 目标：把排行榜、反馈、占卜、江湖模块迁入新的 feature 架构。
 
-Checklist:
+状态：未开始
 
-- [ ] 排行榜 API 从 HTML 改为 JSON
-- [ ] React 实现排行榜页签与列表
-- [ ] 反馈改为 settings/feedback 面板
-- [ ] 占卜模块迁为独立 feature
-- [ ] 江湖模块拆分为用户信息、擂台、积分同步等子模块
-- [ ] 审核哪些江湖逻辑应放服务端而不是前端
+已完成：
+
+- 文档里已经明确了排行榜、反馈、占卜、江湖的目标落点
+
+进行中：
+
+- 无
+
+未开始：
+
+- 排行榜、反馈、占卜、江湖都还没有进入 React feature 的实作阶段
 
 完成标志：原来独立 Qt 对话框的大部分业务功能都能在 React 中访问。
 
@@ -139,14 +168,20 @@ Checklist:
 
 目标：把旧客户端的不安全边界彻底移除。
 
-Checklist:
+状态：进行中
 
-- [ ] 删除客户端直连 Redis 的能力
-- [ ] 删除客户端直写业务关键数值的逻辑
-- [ ] 统一使用 API 鉴权和受控同步接口
-- [ ] 将排行榜、积分、修为等关键计算迁到服务端
-- [ ] 去掉旧的私有加密协议兼容层
-- [ ] 增加限流、审计、错误上报
+已完成：
+
+- Python 服务和 Node API 已补一轮安全加固，鉴权和 OpenClaw adapter 边界已经收口一部分
+
+进行中：
+
+- Qt 客户端到服务端的传输配置已开始统一，但旧业务边界还没有彻底拆掉
+
+未开始：
+
+- 客户端直连 Redis、客户端关键数值逻辑、排行榜服务端化等还没有完全收口
+- 旧私有协议还没有彻底移除
 
 完成标志：前端只负责展示和交互，关键业务状态以服务端为准。
 

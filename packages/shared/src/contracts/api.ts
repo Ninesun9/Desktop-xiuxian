@@ -52,11 +52,14 @@ export type ChatMessage = {
   createdAt: string;
 };
 
+export type ChatMessageRole = ChatMessage['role'];
+
 export type ChatMessageListResponse = {
   items: ChatMessage[];
 };
 
 export type CreateMessageRequest = {
+  role?: ChatMessageRole;
   content: string;
   stream: boolean;
 };

@@ -4,21 +4,44 @@ type ChatPanelProps = {
   messages: ChatMessage[];
   draft: string;
   isSending: boolean;
+  sessionTitle: string;
+  companionReady: boolean;
+  quickPrompts: string[];
   onDraftChange: (value: string) => void;
   onSend: () => void;
+  onQuickPrompt: (value: string) => void;
+};
+
+const formatTime = (value: string) => {
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) {
+    return '--:--';
+  }
+  return date.toLocaleTimeString('zh-CN', {
+    hour: '2-digit',
+    minute: '2-digit'
+  });
 };
 
 export function ChatPanel(props: ChatPanelProps) {
-  const { messages, draft, isSending, onDraftChange, onSend } = props;
+  const { messages, draft, isSending, sessionTitle, companionReady, quickPrompts, onDraftChange, onSend, onQuickPrompt } = props;
 
   return (
     <section className="chat-card">
       <div className="chat-header">
         <div>
           <p className="eyebrow">Companion Chat</p>
-          <h2>陪伴对话</h2>
+          <h2>{sessionTitle}</h2>
         </div>
-        <span className="chat-badge">{isSending ? '响应中' : '待命'}</span>
+        <span className="chat-badge">{isSending ? '响应中' : companionReady ? '在线' : '待命'}</span>
+      </div>
+
+      <div className="quick-prompts">
+        {quickPrompts.map((prompt) => (
+          <button key={prompt} type="button" className="quick-prompt" onClick={() => onQuickPrompt(prompt)}>
+            {prompt}
+          </button>
+        ))}
       </div>
 
       <div className="message-list">
@@ -27,7 +50,12 @@ export function ChatPanel(props: ChatPanelProps) {
         ) : (
           messages.map((message) => (
             <article key={message.id} className={`message message-${message.role}`}>
-              <span className="message-role">{message.role === 'user' ? '你' : '伴侣'}</span>
+              <header className="message-meta">
+                <span className="message-role">
+                  {message.role === 'user' ? '你' : message.role === 'assistant' ? '伴侣' : '系统'}
+                </span>
+                <time>{formatTime(message.createdAt)}</time>
+              </header>
               <p>{message.content || '...'}</p>
             </article>
           ))
@@ -38,6 +66,12 @@ export function ChatPanel(props: ChatPanelProps) {
         <textarea
           value={draft}
           onChange={(event) => onDraftChange(event.target.value)}
+          onKeyDown={(event) => {
+            if (event.key === 'Enter' && !event.shiftKey) {
+              event.preventDefault();
+              onSend();
+            }
+          }}
           placeholder="例如：帮我规划今天的工作和休息时间"
           rows={3}
         />

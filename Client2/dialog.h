@@ -7,28 +7,20 @@
 #include <QPushButton>
 #include <QPainter>
 #include <QMouseEvent>
-#include <QSettings>
 #include <QVariant>
 #include <QInputDialog>
 #include "makename.h"
-#include "QDateTime"
-#include <QCryptographicHash>
-#include <QDir>
 #include <QDebug>
 #include <QTimer>
 #include <QList>
 #include <QMenu>
 #include <QAction>
 #include <QFile>
-#include <QJsonObject>
-#include <QtNetwork>
-#include <QByteArray>
 #include "ranklist.h"
-#include <QCryptographicHash>
-#include "qaesencryption.h"
 #include "QPixmap"
 #include <QWidget>
 #include "chatmessage/chatwindow.h"
+#include "mail/maildrawer.h"
 #include "UpdataInfo/updatainfp.h"
 #include "Augur/augurwindow.h"
 #include  "UpdataInfo/feedback.h"
@@ -80,6 +72,7 @@ public:
         if(moveState)
         {
             this->move(event->globalPos() + m_startPoint);
+            repositionMailDrawer();
         }
 
     }
@@ -100,8 +93,10 @@ private slots:
     void on__changeName_triggered();
 
     void on_augur_triggered();
+    void toggleMailDrawer();
 
 private:
+    void repositionMailDrawer();
     QPoint m_startPoint;
     QString _userid;
     QString _userName;
@@ -132,12 +127,6 @@ private:
     QAction _chat;
     QMenu pop_menu;
 
-    QNetworkAccessManager*  m_httpManager;
-    QNetworkReply * m_httpReply;
-    QNetworkRequest  m_httpRequest;
-    QByteArray  m_httpData;
-    QJsonDocument m_httpDocum;
-
     Qt::WindowFlags _flags;
     bool isToping = true;
     QPixmap _skinPng;
@@ -145,6 +134,7 @@ private:
 
     UpdataInfp _updataInfo;
     ChatWindow _chatWindow;
+    MailDrawer _mailDrawer;
     AugurWindow _augurWindow;
     FeedBack _feedback;
     JiangHu _jianghu;

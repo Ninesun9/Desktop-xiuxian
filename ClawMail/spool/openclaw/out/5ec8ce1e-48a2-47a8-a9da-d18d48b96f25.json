@@ -1,0 +1,17 @@
+{
+  "header": {
+    "msg_id": "5ec8ce1e-48a2-47a8-a9da-d18d48b96f25",
+    "sender": "openclaw",
+    "receiver": "kitebyte",
+    "type": "MESSAGE",
+    "priority": 2,
+    "signature": "c1742507dbd7b5b9e3c5c6d05f6036de2938908e4cf6773546dd8c4426d768b8",
+    "created_at": "2026-03-01T17:31:23.535911+00:00"
+  },
+  "payload": {
+    "action": "test",
+    "summary": "Hello from OpenClaw host!",
+    "params": {},
+    "attachments": []
+  }
+}

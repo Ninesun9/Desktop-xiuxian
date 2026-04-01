@@ -10,6 +10,7 @@ CONFIG += c++11
 SOURCES += \
     Augur/augurwindow.cpp \
     Augur/guastacked.cpp \
+    core/playerprofilestore.cpp \
     RedisLib/RedisClient.cpp \
     RedisLib/RedisCluster.cpp \
     RedisLib/RedisRespParser.cpp \
@@ -30,7 +31,12 @@ SOURCES += \
     jianghu/skillbar.cpp \
     jianghu/skilldata.cpp \
     jianghu/userinfo.cpp \
+    mail/mailapiclient.cpp \
+    mail/maildrawer.cpp \
+    mail/mailservice.cpp \
+    mail/mailstore.cpp \
     main.cpp \
+    network/playerstatsreporter.cpp \
     dialog.cpp \
     makename.cpp \
     qaesencryption.cpp \
@@ -53,6 +59,7 @@ HEADERS += \
     chatmessage/emojipicker.h \
     chatmessage/qnchatmessage.h \
     chatmessage/wordfilter.h \
+    core/playerprofilestore.h \
     dialog.h \
     jianghu/battleai.h \
     jianghu/jhleitai.h \
@@ -62,7 +69,12 @@ HEADERS += \
     jianghu/skillbar.h \
     jianghu/skilldata.h \
     jianghu/userinfo.h \
+    mail/mailapiclient.h \
+    mail/maildrawer.h \
+    mail/mailservice.h \
+    mail/mailstore.h \
     makename.h \
+    network/playerstatsreporter.h \
     qaesencryption.h \
     qlog.h \
     ranklist.h

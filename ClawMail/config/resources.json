@@ -1,0 +1,31 @@
+{
+  "version": "1.0",
+  "description": "RobotMail 资源映射表",
+  "resources": {
+    "scanner": {
+      "path": "/root/.openclaw/tools/scanner.py",
+      "type": "tool",
+      "description": "网络扫描工具",
+      "tags": ["network", "scan", "security"],
+      "execute": true
+    },
+    "cleanup": {
+      "path": "/root/.openclaw/tools/cleanup.py",
+      "type": "tool",
+      "description": "清理工具",
+      "tags": ["maintenance", "cleanup"],
+      "execute": true
+    },
+    "healthcheck": {
+      "path": "/usr/lib/node_modules/openclaw/skills/healthcheck",
+      "type": "skill",
+      "description": "健康检查技能",
+      "tags": ["health", "security", "audit"]
+    }
+  },
+  "resource_aliases": {
+    "扫描工具": "scanner",
+    "清理工具": "cleanup",
+    "健康检查": "healthcheck"
+  }
+}

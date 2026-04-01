@@ -2,6 +2,8 @@
 #include "ui_augurwindow.h"
 #include <QDebug>
 #include <QDateTime>
+
+#include "../core/playerprofilestore.h"
 AugurWindow::AugurWindow(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::AugurWindow)
@@ -21,21 +23,13 @@ AugurWindow::~AugurWindow()
 {
     delete ui;
 }
-#include <QSettings>
-#include <QDir>
 void AugurWindow::on_start_clicked()
 {
-    int userid =2222;
-
-    QSettings configIni(QDir::homePath()+"/AppData/Roaming/xiuxian.ini", QSettings::IniFormat);
-    if(configIni.status() == QSettings::NoError)
+    PlayerProfile profile;
+    int userid = 2222;
+    if (PlayerProfileStore::load(&profile))
     {
-        auto str = configIni.value("xiuxian/userid").toString();
-        QByteArray ba = str.toLatin1();
-        for(int i = 0 ;i<ba.count();i++)
-        {
-            userid=userid+ba.at(i);
-        }
+        userid = PlayerProfileStore::seedFromUserId(profile.userId, userid);
     }
     qsrand(QDateTime::currentDateTime().toString("yyyyMMdd").toInt()+userid);
     for(int i=0;i<6;i++)

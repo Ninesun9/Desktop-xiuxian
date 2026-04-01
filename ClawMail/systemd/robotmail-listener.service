@@ -1,0 +1,15 @@
+[Unit]
+Description=RobotMail Listener for %i
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/root/mailbox_hub/robotmail
+ExecStart=/usr/bin/python3 /root/mailbox_hub/robotmail/agent_listener.py --bot %i --interval 15 --ack-text
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

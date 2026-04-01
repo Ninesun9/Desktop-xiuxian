@@ -1,0 +1,16 @@
+[Unit]
+Description=RobotMail Hub
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/root/mailbox_hub/robotmail
+ExecStart=/usr/bin/python3 /root/mailbox_hub/robotmail/robotmail-server.py --host 0.0.0.0 --port 5180
+Restart=always
+RestartSec=5
+Environment=ROBOTMAIL_HOME=/root/.robotmail-hub
+
+[Install]
+WantedBy=multi-user.target
