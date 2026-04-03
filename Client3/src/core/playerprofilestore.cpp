@@ -47,6 +47,7 @@ bool PlayerProfileStore::load(PlayerProfile *profile)
     profile->wuxing    = decode(s, "xiuxian/wuxing").toDouble();
     profile->jingjie   = decode(s, "xiuxian/jingjie").toInt();
     profile->xiuwei    = decode(s, "xiuxian/xiuwei").toDouble();
+    profile->lingshi   = decode(s, "xiuxian/lingshi").toDouble();
     return true;
 }
 
@@ -61,6 +62,7 @@ void PlayerProfileStore::save(const PlayerProfile &profile)
     s.setValue("xiuxian/wuxing",    encode(profile.wuxing));
     s.setValue("xiuxian/jingjie",   encode(profile.jingjie));
     s.setValue("xiuxian/xiuwei",    encode(profile.xiuwei));
+    s.setValue("xiuxian/lingshi",   encode(profile.lingshi));
 }
 
 PlayerProfile PlayerProfileStore::createNew(const QString &userName)

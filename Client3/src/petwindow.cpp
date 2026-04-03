@@ -230,6 +230,7 @@ void PetWindow::repositionMailDrawer()
 void PetWindow::onTick1s()
 {
     GameLogic::tickXiuwei(m_profile);
+    GameLogic::tickLingshi(m_profile);
 }
 
 void PetWindow::onTick10s()
@@ -243,9 +244,10 @@ void PetWindow::onTick10s()
     if (m_loggedIn) {
         QJsonObject patch;
         patch["statusText"] = m_profile.jieDuanName()
-            + " · 修为 " + QString::number(m_profile.xiuwei, 'e', 3);
+            + " · 灵石 " + QString::number(static_cast<qint64>(m_profile.lingshi));
         patch["jingjie"] = m_profile.jingjie;
         patch["xiuwei"]  = m_profile.xiuwei;
+        patch["lingshi"] = m_profile.lingshi;
         m_api.patchPetState(patch);
     }
 }
@@ -283,12 +285,13 @@ void PetWindow::showStatusInfo()
 {
     QMessageBox::information(this, "修炼状态",
         m_profile.userName + "\n"
-        "生命：" + QString::number(m_profile.shengming, 'f', 3) + "\n"
-        "攻击：" + QString::number(m_profile.gongji,    'f', 3) + "\n"
-        "防御：" + QString::number(m_profile.fangyu,    'f', 3) + "\n"
-        "悟性：" + QString::number(m_profile.wuxing,    'f', 5) + "\n"
+        "灵石：" + QString::number(static_cast<qint64>(m_profile.lingshi)) + " 枚\n"
         "境界：" + m_profile.jieDuanName() + "\n"
-        "修为：" + QString::number(m_profile.xiuwei,    'e', 3));
+        "修为：" + QString::number(m_profile.xiuwei,    'e', 3) + "\n"
+        "生命：" + QString::number(m_profile.shengming, 'f', 1) + "\n"
+        "攻击：" + QString::number(m_profile.gongji,    'f', 1) + "\n"
+        "防御：" + QString::number(m_profile.fangyu,    'f', 1) + "\n"
+        "悟性：" + QString::number(m_profile.wuxing,    'f', 4));
 }
 
 void PetWindow::toggleAlwaysOnTop(bool checked)

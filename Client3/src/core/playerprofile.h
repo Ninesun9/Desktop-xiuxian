@@ -19,6 +19,7 @@ struct PlayerProfile
     double  wuxing    = 1.0;   // 悟性
     int     jingjie   = 0;     // 境界（索引）
     double  xiuwei    = 0.0;   // 修为
+    double  lingshi   = 0.0;   // 灵石（货币）
 
     QString jieDuanName() const
     {
